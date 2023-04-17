@@ -16,6 +16,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import moment from "moment";
+import { useNavigate, useParams } from "react-router-dom";
 
 import spaceXLogo from "../assets/SpaceX-Logo.png";
 import datePicker from "../assets/icon/datePicker.png";
@@ -162,13 +163,16 @@ function Dashboard() {
     perPage: 12,
   });
   const [selectedRow, setSelectedRow] = useState({ ...initialSelectedrow });
-  const [launchFilter, setLaunchFilter] = useState({
-    time: "Past 6 Months",
-    launchType: "All Launches",
-  });
   const [mainData, setMainData] = useState(launchData);
 
+  const { launchType } = useParams();
+  const [launchFilter, setLaunchFilter] = useState({
+    time: "",
+    launchType: launchType ? launchType : "All Launches",
+  });
+
   const classes = useStyles();
+  const navigate = useNavigate();
 
   useEffect(() => {
     let dataByLaunchfilter = [];
@@ -190,14 +194,9 @@ function Dashboard() {
     })
       .then((res) => {
         return res;
-        //   console.log(res);
       })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err.response.data);
-      });
+      .then((res) => {})
+      .catch((err) => {});
   };
 
   useEffect(() => {
@@ -324,8 +323,6 @@ function Dashboard() {
     }
   };
 
-  console.log(paginationData, " JACK");
-
   return (
     <Container>
       <div className={classes.imgHeader}>
@@ -341,7 +338,6 @@ function Dashboard() {
               defaultValue=""
               displayEmpty
               value="Past 6 Months"
-              onChange={(obj) => console.log(obj, " JACK")}
               sx={{
                 boxShadow: "none",
                 ".MuiOutlinedInput-notchedOutline": { border: 0 },
@@ -383,12 +379,13 @@ function Dashboard() {
               defaultValue="All Launches"
               displayEmpty
               value={launchFilter.launchType}
-              onChange={(event) =>
+              onChange={(event) => {
                 setLaunchFilter({
                   ...launchFilter,
                   launchType: event.target.value,
-                })
-              }
+                });
+                navigate(`/${event.target.value}`);
+              }}
               sx={{
                 boxShadow: "none",
                 ".MuiOutlinedInput-notchedOutline": { border: 0 },
